@@ -2,7 +2,10 @@
 
 Project code for Udacity's AI Programming with Python Nanodegree program. In this project, students first develop code for an image classifier built with PyTorch, then convert it into a command line application.
 
+## Part 1 Developing an Image Classifier with Deep Learning
 
+Follow the instructions in the `Image Classifier Project.ipynb` and when it works, create
+an HTML copy of it.
 
 ## Part 2 - Building the command line application
 Now that you've built and trained a deep neural network on the flower data set, it's time to convert it into an application that others can use. Your application should be a pair of Python scripts that run from the command line. For testing, you should use the checkpoint you saved in the first part.

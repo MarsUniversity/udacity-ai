@@ -46,6 +46,8 @@ def trainVal(model, trainloader, validloader, optimizer, epochs, device):
     for e in keep_awake(range(1,epochs+1)):
         running_loss = 0
         for i, (images, labels) in enumerate(trainloader):
+            # if i == 1:
+            #     break
             # Move input and label tensors to the default device
             images, labels = images.to(device), labels.to(device)
 
@@ -127,8 +129,8 @@ if __name__ == "__main__":
     # get the class names and save it to the model
     cat_to_name = getCatagories("cat_to_name.json")
     model.idx_to_class = {v: cat_to_name[k] for k, v in class_to_idx.items()}
-#     print(model.idx_to_class)
-    saveCheckpoint(model, optimizer , chkpt)
+    # print(model.idx_to_class)
+    # saveCheckpoint(model, optimizer , chkpt)
 
     model = trainVal(model, trainloader, validloader, optimizer, epochs, device)
     saveCheckpoint(model, optimizer , chkpt)

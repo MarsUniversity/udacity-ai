@@ -21,7 +21,7 @@ def handleArgs():
     parser.add_argument('checkpoint', type = str, help = 'model to use')
     parser.add_argument('--gpu', action='store_true', help = 'set GPU use')
     parser.add_argument('--top_k', type = int, default = 5, help = 'return the K most likely classes')
-    parser.add_argument('--category_names', type = str, default = "cat_to_name.json", help = 'json file with catagory names')
+    parser.add_argument('--category_names', type = str, default = "", help = 'json file with catagory names')
     return vars(parser.parse_args())
 
 def predict(args):
@@ -30,15 +30,24 @@ def predict(args):
     image_path = args["path"]
     checkpoint = args["checkpoint"]
     topk = args["top_k"]
+    gpu = args["gpu"]
+    cat_to_names = args["category_names"]
 
     model = loadCheckpoint(checkpoint)
-    idx_to_class = model.idx_to_class
+
+    if cat_to_names != "":
+        cat_to_name = getCatagories(cat_to_names)
+        model.idx_to_class = {v: cat_to_name[k] for k, v in model.class_to_idx.items()}
+        idx_to_class = model.idx_to_class
+    else:
+        idx_to_class = model.idx_to_class
 
     # TODO: Implement the code to predict the class from an image file
     image = process_image(image_path).type(torch.FloatTensor)
 
     model.eval()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cuda" if gpu is True else "cpu")
+    device = set_gpu(gpu)
     model.to(device)
 
 #     image = torch.from_numpy(np.array([image])).type(torch.FloatTensor)
@@ -60,7 +69,7 @@ def predict(args):
 if __name__ == "__main__":
     # ./predict.py flowers/test/59/image_05052.jpg vgg19-2-works-checkpoint.pth
     args = handleArgs()
-    print(args)
+    # print(args)
 
     img, prob, classIdx, clsNames = predict(args)
     print(prob)

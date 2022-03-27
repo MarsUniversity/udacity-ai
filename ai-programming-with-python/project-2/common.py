@@ -88,9 +88,20 @@ def getData(filepath):
     testloader = torch.utils.data.DataLoader(test_data, batch_size=64)
     validloader = torch.utils.data.DataLoader(valid_data, batch_size=64)
 
-    return trainloader, testloader, validloader
+    return trainloader, testloader, validloader, train_data.class_to_idx
 
-def getCatagories(filepath, test_data):
+# def getCatagories(filepath, test_data):
+#     """
+#     Given a json file of indexs to class names and pyTorch data, returns
+#     the decoder ring.
+#     """
+#     with open(filepath, 'r') as f:
+#         cat_to_name = json.load(f)
+#
+#     # torch id to class name
+#     idx_to_class = {v: cat_to_name[k] for k, v in test_data.class_to_idx.items()}
+#     return idx_to_class
+def getCatagories(filepath):
     """
     Given a json file of indexs to class names and pyTorch data, returns
     the decoder ring.
@@ -98,9 +109,7 @@ def getCatagories(filepath, test_data):
     with open(filepath, 'r') as f:
         cat_to_name = json.load(f)
 
-    # torch id to class name
-    idx_to_class = {v: cat_to_name[k] for k, v in test_data.class_to_idx.items()}
-    return idx_to_class
+    return cat_to_name
 
 def set_gpu(val):
     """
@@ -179,8 +188,8 @@ def loadCheckpoint(filepath):
     print(f"Loading a {type(model)} type network with"
         f" {len(checkpoint['hidden_layers'])} hidden layers")
 
-    # model.class_to_idx = checkpoint['cls']
-    model.idx_to_class = checkpoint['idx']
+    model.class_to_idx = checkpoint['cls'] # pytorch mapping
+    model.idx_to_class = checkpoint['idx'] # json mapping from pytorch mapping
 
     if "opt" in checkpoint:
         opt = checkpoint['opt']
@@ -203,13 +212,14 @@ def saveCheckpoint(model, optimizer, filename='checkpoint.pth'):
         'output_size': m.output.out_features,
         'hidden_layers': [each.out_features for each in m.hidden_layers],
         'state_dict': m.state_dict(),
-        # 'cls': model.class_to_idx,
-        'idx': model.idx_to_class,
+        'cls': model.class_to_idx, # pytorch mapping
+        'idx': model.idx_to_class, # json mapping from pytorch mapping
     }
     if optimizer:
         checkpoint['opt']: optimizer.state_dict
 
     torch.save(checkpoint, filename)
+    print(f">> Saved {name} model to {filename}")
 
 
 def process_image(image_path):

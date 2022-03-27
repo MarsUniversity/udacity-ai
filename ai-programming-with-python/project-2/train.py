@@ -17,7 +17,7 @@ from common import *
 
 desc = """train a neural network
 
-Ex: ./train.py flowers --learning_rate 0.01 --hidden_units 512 256 --epochs 20
+Ex: ./train.py flowers --learning_rate 0.0001 --hidden_units 4096 512 --epochs 1 --gpu
 """
 
 def handleArgs():
@@ -27,7 +27,7 @@ def handleArgs():
     parser.add_argument('--arch', type = str, default = 'vgg',  choices=['resnet', 'vgg'], help = 'select neural network to use')
     parser.add_argument('--hidden_units', type = int, default = (1024,102),  nargs='+', help = 'set hidden layers')
     parser.add_argument('--learning_rate', type = float, default = 0.0003, help = 'set learning rate')
-    parser.add_argument('--save_dir', type = str, default = './', help = 'checkpoint save location')
+    parser.add_argument('--save_dir', type = str, default = '.', help = 'checkpoint save location')
     parser.add_argument('--epochs', type = int, default = 10, help = 'number of epochs to train for')
     return vars(parser.parse_args())
 
@@ -90,7 +90,7 @@ def trainVal(model, trainloader, validloader, optimizer, epochs, device):
             print(f">> Epoch: {e+1}/{epochs}              Train Loss: {train_losses[-1]:.3f}"
                   f" Val Loss: {val_losses[-1]:.3f} Accuracy: {accuracy[-1]:.3f}")
 
-    return train_losses, val_losses, accuracy
+    return model # train_losses, val_losses, accuracy
 
 
 if __name__ == "__main__":
@@ -120,7 +120,15 @@ if __name__ == "__main__":
         raise Exception(f"Invalid model type: {type(model)}")
 
     device = set_gpu(gpu)
-    trainloader, _, validloader = getData(data)
+    trainloader, _, validloader, class_to_idx = getData(data)
+
+    # save the pytorch mapping so we can change it later
+    model.class_to_idx = class_to_idx
+    # get the class names and save it to the model
+    cat_to_name = getCatagories("cat_to_name.json")
+    model.idx_to_class = {v: cat_to_name[k] for k, v in class_to_idx.items()}
+#     print(model.idx_to_class)
+    saveCheckpoint(model, optimizer , chkpt)
 
     model = trainVal(model, trainloader, validloader, optimizer, epochs, device)
-    saveCheckpoint(model, opt, chkpt)
+    saveCheckpoint(model, optimizer , chkpt)

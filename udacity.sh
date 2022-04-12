@@ -23,8 +23,9 @@ build () {
     python3 -m venv "./$PYTORCH"
     . "./$PYTORCH/bin/activate"
     pip install -U pip setuptools wheel colorama
-    pip install -U jupyterlab matplotlib numpy pandas tqdm
-    pip install -U torch torchvision
+    pip install -U jupyterlab matplotlib numpy pandas tqdm ipywidgets
+    pip install -U torch torchvision torchinfo
+    pip install -U scikit-learn bokeh
     # pip install opencv-contrib-python
 }
 

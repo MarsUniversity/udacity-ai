@@ -1,9 +1,19 @@
 *.zip
 pytorch
 *.pt
+text8
+
+MNIST
+*.mat
+*.pkl
+processed_celeba_small
+
+
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
+__pycache__
 *.py[cod]
 *$py.class
 

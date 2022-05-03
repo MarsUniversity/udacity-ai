@@ -2,12 +2,12 @@
 pytorch
 *.pt
 text8
-
+data
 MNIST
 *.mat
 *.pkl
 processed_celeba_small
-
+archive
 
 
 

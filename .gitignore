@@ -8,7 +8,7 @@ MNIST
 *.pkl
 processed_celeba_small
 archive
-
+tmp
 
 
 # Byte-compiled / optimized / DLL files

@@ -9,6 +9,7 @@ MNIST
 processed_celeba_small
 archive
 tmp
+computer-vision
 
 
 # Byte-compiled / optimized / DLL files
